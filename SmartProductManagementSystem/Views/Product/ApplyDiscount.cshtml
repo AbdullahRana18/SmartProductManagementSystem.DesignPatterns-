@@ -1,0 +1,23 @@
+﻿<div class="container mt-5">
+    <div class="card shadow">
+        <div class="card-header bg-warning">
+            <h4>💰 Discount Applied</h4>
+        </div>
+
+        <div class="card-body">
+            <h5>Product: @ViewBag.ProductName</h5>
+
+            <p>
+                <strong>Original Price:</strong>
+                <span class="text-danger">@ViewBag.OriginalPrice</span>
+            </p>
+
+            <p>
+                <strong>Final Price:</strong>
+                <span class="text-success">@ViewBag.FinalPrice</span>
+            </p>
+
+            <a asp-action="Index" class="btn btn-secondary">Back to Products</a>
+        </div>
+    </div>
+</div>

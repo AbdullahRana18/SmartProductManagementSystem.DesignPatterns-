@@ -1,0 +1,23 @@
+﻿@model SmartProductManagementSystem.Models.Product
+
+<div class="container mt-5">
+    <h3>Add Product</h3>
+
+    <form asp-action="Create" method="post">
+        <input asp-for="Name" class="form-control mb-2" placeholder="Product Name" />
+        <input asp-for="Price" class="form-control mb-2" placeholder="Price" />
+        <input asp-for="StockQuantity" class="form-control mb-2" placeholder="Stock" />
+        <label>Select Category:</label>
+        <select asp-for="CategoryId" class="form-control mb-2"
+                asp-items="ViewBag.Categories"></select>
+
+        @* <select name="selectedType" class="form-control mb-3">
+            @foreach (var type in ViewBag.ProductTypes)
+            {
+                <option value="@type">@type</option>
+            }
+        </select> *@
+
+        <button class="btn btn-success">Save</button>
+    </form>
+</div>

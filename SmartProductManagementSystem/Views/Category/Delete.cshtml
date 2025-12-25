@@ -1,0 +1,19 @@
+﻿@model SmartProductManagementSystem.Models.Category
+
+<div class="container mt-5">
+    <div class="card shadow">
+        <div class="card-header bg-danger text-white">
+            <h4>Delete Category</h4>
+        </div>
+        <div class="card-body">
+            <p>Are you sure you want to delete:</p>
+            <h5 class="text-danger">@Model.Name</h5>
+
+            <form asp-action="Delete" method="post">
+                <input type="hidden" asp-for="Id" />
+                <button type="submit" class="btn btn-danger">Yes, Delete</button>
+                <a asp-action="Index" class="btn btn-secondary">Cancel</a>
+            </form>
+        </div>
+    </div>
+</div>

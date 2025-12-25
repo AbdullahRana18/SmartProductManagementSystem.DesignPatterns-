@@ -1,0 +1,42 @@
+## [Visual Studio Specific]
+.vs/
+[Dd]ebug/
+[Rr]elease/
+x64/
+x86/
+*.user
+*.userosscache
+*.sln.docstates
+
+## [Build Results]
+bin/
+obj/
+
+## [ASP.NET Core Specific]
+project.lock.json
+project.fragment.lock.json
+artifacts/
+ClientApp/dist/
+wwwroot/dist/
+
+## [User-specific files]
+*.rsuser
+*.suo
+*.user
+*.userprefs
+
+## [Database Specific]
+# Agar aap local SQL Server Express use kar rahe hain to inko exclude karna behtar hai
+*.mdf
+*.ldf
+*.sdf
+
+## [Environment Variables]
+.env
+.env.development
+.env.local
+appsettings.Development.json
+
+## [OS Specific]
+.DS_Store
+Thumbs.db

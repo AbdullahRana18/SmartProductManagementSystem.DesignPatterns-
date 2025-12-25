@@ -1,0 +1,39 @@
+﻿@model IEnumerable<SmartProductManagementSystem.Models.Product>
+
+<div class="container mt-4">
+    <h2>📦 Products</h2>
+    <a asp-action="Create" class="btn btn-success mb-3">Add Product</a>
+
+    <table class="table table-bordered">
+        <thead class="table-dark">
+            <tr>
+                <th>Name</th>
+                <th>Price</th>
+                <th>Stock</th>
+                <th>Type</th>
+                <th>Category</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>@item.Name</td>
+                    <td>@item.Price</td>
+                    <td>@item.StockQuantity</td>
+                    <td>@item.ProductType</td>
+                    <td>@item.Category?.Name</td>
+                    <td>
+                        <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-primary btn-sm">Edit</a>
+                        <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-danger btn-sm">Delete</a>
+                        <a asp-action="ConvertPrice" asp-route-id="@item.Id" class="btn btn-sm btn-outline-info">
+                            <i class="bi bi-currency-exchange"></i> Convert
+                        </a>
+                        <a asp-action="ApplyDiscount" asp-route-id="@item.Id" class="btn btn-warning btn-sm"> Discount</a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
