@@ -1,10 +1,29 @@
 ﻿@model IEnumerable<SmartProductManagementSystem.Models.Product>
 
 <div class="container mt-4">
-    <h2>📦 Products</h2>
-    <a asp-action="Create" class="btn btn-success mb-3">Add Product</a>
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h2>📦 Products</h2>
 
-    <table class="table table-bordered">
+        <div>
+            <a asp-action="Undo" class="btn btn-secondary me-2">
+                <i class="bi bi-arrow-counterclockwise"></i> Undo Last Action (Ctrl+Z)
+            </a>
+
+            <a asp-action="Create" class="btn btn-success">
+                <i class="bi bi-plus-lg"></i> Add Product
+            </a>
+        </div>
+    </div>
+
+    @if (ViewBag.Notification != null)
+    {
+        <div class="alert alert-info alert-dismissible fade show" role="alert">
+            <strong>Notification:</strong> @ViewBag.Notification
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
+
+    <table class="table table-bordered table-hover shadow-sm">
         <thead class="table-dark">
             <tr>
                 <th>Name</th>
@@ -12,7 +31,7 @@
                 <th>Stock</th>
                 <th>Type</th>
                 <th>Category</th>
-                <th>Actions</th>
+                <th style="width: 350px;">Actions</th>
             </tr>
         </thead>
         <tbody>
@@ -21,19 +40,47 @@
                 <tr>
                     <td>@item.Name</td>
                     <td>@item.Price</td>
-                    <td>@item.StockQuantity</td>
+                    <td>
+                        @if (item.StockQuantity < 5)
+                        {
+                            <span class="badge bg-danger">Low: @item.StockQuantity</span>
+                        }
+                        else
+                        {
+                            <span class="badge bg-success">@item.StockQuantity</span>
+                        }
+                    </td>
                     <td>@item.ProductType</td>
                     <td>@item.Category?.Name</td>
                     <td>
-                        <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-primary btn-sm">Edit</a>
-                        <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-danger btn-sm">Delete</a>
-                        <a asp-action="ConvertPrice" asp-route-id="@item.Id" class="btn btn-sm btn-outline-info">
-                            <i class="bi bi-currency-exchange"></i> Convert
-                        </a>
-                        <a asp-action="ApplyDiscount" asp-route-id="@item.Id" class="btn btn-warning btn-sm"> Discount</a>
+                        <div class="d-flex gap-1">
+                            <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-primary btn-sm">Edit</a>
+
+                            <form asp-action="Delete" asp-route-id="@item.Id" method="post" onsubmit="return confirm('Are you sure you want to delete @item.Name?');">
+                                <button type="submit" class="btn btn-danger btn-sm">Delete</button>
+                            </form>
+
+                            <a asp-action="ConvertPrice" asp-route-id="@item.Id" class="btn btn-sm btn-outline-info">
+                                Convert
+                            </a>
+
+                            <a asp-action="ApplyDiscount" asp-route-id="@item.Id" class="btn btn-warning btn-sm"> Discount</a>
+                        </div>
                     </td>
                 </tr>
             }
         </tbody>
     </table>
 </div>
+
+<script>
+    document.addEventListener('keydown', function(event) {
+        // Check if Ctrl + Z is pressed
+        if ((event.ctrlKey || event.metaKey) && event.key === 'z') {
+            event.preventDefault(); // Browser ka default undo roko
+
+            // Undo URL par redirect karo
+            window.location.href = '@Url.Action("Undo", "Product")';
+        }
+    });
+</script>

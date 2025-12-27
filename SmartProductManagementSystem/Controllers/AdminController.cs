@@ -1,5 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using SmartProductManagementSystem.Data;
+using SmartProductManagementSystem.Data; // Agar zaroorat ho to
 using SmartProductManagementSystem.DesignPatterns.Creational.Singleton;
 using SmartProductManagementSystem.DesignPatterns.Structural.Facade;
 
@@ -9,9 +9,10 @@ namespace SmartProductManagementSystem.Controllers
     {
         private readonly AdminDashboardFacade _dashboardFacade;
 
-        public AdminController(AppDbContext context)
+        // Constructor Injection (Program.cs se Facade automatic ayega)
+        public AdminController(AdminDashboardFacade dashboardFacade)
         {
-            _dashboardFacade = new AdminDashboardFacade(context);
+            _dashboardFacade = dashboardFacade;
         }
 
         public IActionResult Dashboard()
@@ -22,6 +23,7 @@ namespace SmartProductManagementSystem.Controllers
 
             return View();
         }
+
         public IActionResult Index()
         {
             var settings = AppSettingsSingleton.Instance;

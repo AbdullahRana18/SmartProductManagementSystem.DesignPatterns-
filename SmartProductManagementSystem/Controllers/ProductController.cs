@@ -2,11 +2,14 @@
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using SmartProductManagementSystem.Data;
-using SmartProductManagementSystem.DesignPatterns.Behavioral;
-using SmartProductManagementSystem.DesignPatterns.Structural;
+using SmartProductManagementSystem.Models;
+using System.Text.Json; // JSON Session ke liye
+using System.Collections.Generic; // Dictionary ke liye (Important Fix)
+
+// Design Pattern Namespaces
 using SmartProductManagementSystem.DesignPatterns.Behavioral.Command;
 using SmartProductManagementSystem.DesignPatterns.Behavioral.Observer;
-using SmartProductManagementSystem.Models;
+using SmartProductManagementSystem.DesignPatterns.Creational.Builder;
 using SmartProductManagementSystem.DesignPatterns.Creational.Factory;
 using SmartProductManagementSystem.DesignPatterns.Structural.Adapter;
 using SmartProductManagementSystem.DesignPatterns.Structural.Decorator;
@@ -16,16 +19,27 @@ namespace SmartProductManagementSystem.Controllers
     public class ProductController : Controller
     {
         private readonly AppDbContext _context;
-        private static ICommand? _lastCommand; // Undo feature ke liye static state
 
         public ProductController(AppDbContext context)
         {
             _context = context;
         }
 
+        // --- SESSION HELPER (Professional Undo) ---
+        private void SetUndoSession(string actionType, int productId)
+        {
+            var undoData = new { Action = actionType, Id = productId };
+            HttpContext.Session.SetString("LastCommand", JsonSerializer.Serialize(undoData));
+        }
+
         // READ - List all products
         public async Task<IActionResult> Index()
         {
+            if (TempData["StockNotification"] != null)
+            {
+                ViewBag.Notification = TempData["StockNotification"];
+            }
+
             var products = _context.Products.Include(p => p.Category);
             return View(await products.ToListAsync());
         }
@@ -37,37 +51,33 @@ namespace SmartProductManagementSystem.Controllers
             return View();
         }
 
-        // CREATE - POST (Dynamic Factory + Command Pattern)
+        // CREATE - POST (Uses BUILDER & COMMAND Pattern)
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(Product product)
         {
             if (ModelState.IsValid)
             {
-                // 1. Database se selected Category ka naam nikalna
                 var selectedCategory = await _context.Categories.FindAsync(product.CategoryId);
                 string categoryName = selectedCategory?.Name ?? "Grocery";
 
-                // 2. Dynamic Factory Pattern Link
-                try
-                {
-                    // Agar factory mein ye type mojud hai (Electronics, Grocery, etc)
-                    var productTypeObj = ProductFactory.CreateProduct(categoryName);
-                    product.ProductType = productTypeObj.GetProductType();
-                }
-                catch
-                {
-                    // Agar koi aisi category hai jo factory mein nahi, to uska naam hi type ban jaye
-                    product.ProductType = categoryName;
-                }
+                // --- 1. BUILDER PATTERN IMPLEMENTATION ---
+                // "new Product()" ki jagah Builder use kar rahe hain
+                var builder = new ProductBuilder();
+                Product finalProduct = builder
+                    .SetType(categoryName)
+                    .SetBasicInfo(product.Name, product.CategoryId)
+                    .SetFinancials(product.Price, product.StockQuantity)
+                    .Build();
 
-                // 3. Save using Command Pattern
-                _lastCommand = new AddProductCommand(_context, product);
-                _lastCommand.Execute();
+                // --- 2. COMMAND PATTERN EXECUTION ---
+                ICommand command = new AddProductCommand(_context, finalProduct);
+                command.Execute();
 
-                // 4. Alert Notification
-                TempData["StockNotification"] = "Product added successfully!";
+                // --- 3. SAVE STATE IN SESSION (For Undo) ---
+                SetUndoSession("Add", finalProduct.Id);
 
+                TempData["StockNotification"] = "Product added successfully via Builder!";
                 return RedirectToAction(nameof(Index));
             }
 
@@ -85,7 +95,7 @@ namespace SmartProductManagementSystem.Controllers
             return View(product);
         }
 
-        // EDIT - POST (Command Pattern)
+        // EDIT - POST (Command Pattern + Session)
         [HttpPost]
         [ValidateAntiForgeryToken]
         public IActionResult Edit(int id, Product updatedProduct)
@@ -97,15 +107,19 @@ namespace SmartProductManagementSystem.Controllers
                 var existingProduct = _context.Products.Find(id);
                 if (existingProduct == null) return NotFound();
 
-                _lastCommand = new UpdateProductCommand(_context, existingProduct, updatedProduct);
-                _lastCommand.Execute();
+                // Command Execute
+                ICommand command = new UpdateProductCommand(_context, existingProduct, updatedProduct);
+                command.Execute();
+
+                // Save Session for Undo
+                SetUndoSession("Edit", id);
 
                 return RedirectToAction(nameof(Index));
             }
             return View(updatedProduct);
         }
 
-        // DELETE - POST (Command Pattern)
+        // DELETE - POST
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public IActionResult DeleteConfirmed(int id)
@@ -113,9 +127,42 @@ namespace SmartProductManagementSystem.Controllers
             var product = _context.Products.Find(id);
             if (product != null)
             {
-                _lastCommand = new DeleteProductCommand(_context, product);
-                _lastCommand.Execute();
+                // ERROR FIX: Removed _lastCommand, used local variable
+                ICommand command = new DeleteProductCommand(_context, product);
+                command.Execute();
             }
+            return RedirectToAction(nameof(Index));
+        }
+
+        // --- UNDO FEATURE (READS FROM SESSION) ---
+        public IActionResult Undo()
+        {
+            var sessionData = HttpContext.Session.GetString("LastCommand");
+
+            if (!string.IsNullOrEmpty(sessionData))
+            {
+                // Deserialize logic fixed for System.Text.Json
+                var undoInfo = JsonSerializer.Deserialize<Dictionary<string, JsonElement>>(sessionData);
+
+                // ERROR FIX: Used GetString() instead of ToString()
+                string action = undoInfo["Action"].GetString();
+                int id = undoInfo["Id"].GetInt32();
+
+                if (action == "Add")
+                {
+                    var product = _context.Products.Find(id);
+                    if (product != null)
+                    {
+                        var command = new DeleteProductCommand(_context, product);
+                        command.Execute();
+                    }
+                }
+                // (Future: Add logic for Edit Undo here)
+
+                HttpContext.Session.Remove("LastCommand");
+                TempData["StockNotification"] = "Last Action Undone Successfully!";
+            }
+
             return RedirectToAction(nameof(Index));
         }
 
@@ -143,10 +190,8 @@ namespace SmartProductManagementSystem.Controllers
             if (product == null) return NotFound();
 
             ICurrencyAdapter adapter = new CurrencyAdapter();
-            if (string.IsNullOrEmpty(currency))
-            {
-                currency = "PKR";
-            }
+            if (string.IsNullOrEmpty(currency)) currency = "PKR";
+
             ViewBag.OriginalPrice = product.Price;
             ViewBag.ConvertedPrice = adapter.ConvertTo(currency, product.Price);
             ViewBag.Currency = currency;
@@ -155,7 +200,7 @@ namespace SmartProductManagementSystem.Controllers
             return View(product);
         }
 
-        // OBSERVER PATTERN: Update Stock Notification
+        // OBSERVER PATTERN: Update Stock
         public IActionResult UpdateStock(int productId, int newStock)
         {
             var product = _context.Products.Find(productId);
@@ -164,9 +209,9 @@ namespace SmartProductManagementSystem.Controllers
             product.StockQuantity = newStock;
             _context.SaveChanges();
 
+            // Notify via TempData (Visible to User)
             var stockSubject = new StockSubject();
-            var userObserver = new UserObserver();
-            stockSubject.Attach(userObserver);
+            stockSubject.Attach(new UserObserver());
 
             string msg = $"Stock updated for {product.Name}. New Quantity: {newStock}";
             stockSubject.Notify(msg);
@@ -176,7 +221,7 @@ namespace SmartProductManagementSystem.Controllers
             return RedirectToAction("Index");
         }
 
-        // STRATEGY PATTERN: Apply Discount Strategy
+        // STRATEGY PATTERN
         public IActionResult ApplyStrategyDiscount(int id, string type)
         {
             var product = _context.Products.Find(id);
@@ -191,13 +236,6 @@ namespace SmartProductManagementSystem.Controllers
 
             ViewBag.FinalPrice = strategy != null ? strategy.ApplyDiscount(product.Price) : product.Price;
             return View(product);
-        }
-
-        // UNDO Feature
-        public IActionResult Undo()
-        {
-            _lastCommand?.Undo();
-            return RedirectToAction(nameof(Index));
         }
     }
 }
