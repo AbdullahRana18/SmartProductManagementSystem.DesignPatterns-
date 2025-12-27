@@ -1,22 +1,84 @@
 ﻿@model SmartProductManagementSystem.Models.Category
 
-<div class="container mt-5">
-    <div class="card shadow">
-        <div class="card-header bg-primary text-white">
-            <h4>Edit Category</h4>
-        </div>
-        <div class="card-body">
-            <form asp-action="Edit" method="post">
-                <input type="hidden" asp-for="Id" />
+@{
+    ViewData["Title"] = "Edit Category";
+}
 
-                <div class="mb-3">
-                    <label class="form-label">Category Name</label>
-                    <input asp-for="Name" class="form-control" />
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6 col-lg-5">
+
+            <div class="card border-0 shadow-lg rounded-4 overflow-hidden">
+
+                <div class="card-header bg-primary text-white text-center py-4 border-0">
+                    <div class="icon-circle bg-white bg-opacity-10 mx-auto mb-2 text-white">
+                        <i class="bi bi-pencil-square fs-3"></i>
+                    </div>
+                    <h4 class="fw-bold mb-1">Edit Category</h4>
+                    <p class="text-white-50 small mb-0">Update category details</p>
                 </div>
 
-                <button type="submit" class="btn btn-primary">Update</button>
-                <a asp-action="Index" class="btn btn-secondary">Back</a>
-            </form>
+                <div class="card-body p-4 p-md-5 bg-white">
+                    <form asp-action="Edit" method="post">
+                        <input type="hidden" asp-for="Id" />
+
+                        <div class="mb-4">
+                            <label class="form-label small text-muted fw-bold ls-1">CATEGORY NAME</label>
+                            <div class="input-group input-group-lg shadow-sm rounded-3 overflow-hidden border">
+                                <span class="input-group-text bg-white border-0 text-muted ps-3">
+                                    <i class="bi bi-tag"></i>
+                                </span>
+                                <input asp-for="Name" class="form-control border-0 shadow-none ps-2" placeholder="Category Name" />
+                            </div>
+                            <span asp-validation-for="Name" class="text-danger small ms-1"></span>
+                        </div>
+
+                        <div class="d-grid gap-3 pt-2">
+                            <button type="submit" class="btn btn-primary btn-lg rounded-3 shadow-sm fw-bold">
+                                <i class="bi bi-check2-all me-2"></i> Update Category
+                            </button>
+                            <a asp-action="Index" class="btn btn-light btn-lg rounded-3 text-muted">
+                                Cancel
+                            </a>
+                        </div>
+
+                    </form>
+                </div>
+            </div>
+
         </div>
     </div>
 </div>
+
+<style>
+    body {
+        background-color: #f5f7fa;
+    }
+
+    /* Header Icon */
+    .icon-circle {
+        width: 50px;
+        height: 50px;
+        border-radius: 14px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        backdrop-filter: blur(5px);
+    }
+
+    /* Input Focus Effect (Blue Glow) */
+    .input-group:focus-within {
+        box-shadow: 0 0 0 3px rgba(13, 110, 253, 0.15) !important;
+        border-color: #0d6efd !important;
+    }
+
+    .ls-1 {
+        letter-spacing: 1px;
+    }
+</style>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}
