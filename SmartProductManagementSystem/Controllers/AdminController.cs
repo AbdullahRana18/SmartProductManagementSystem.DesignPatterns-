@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using SmartProductManagementSystem.Data;
-using SmartProductManagementSystem.DesignPatterns.Structural;
 using SmartProductManagementSystem.DesignPatterns.Creational.Singleton;
+using SmartProductManagementSystem.DesignPatterns.Structural.Facade;
 
 namespace SmartProductManagementSystem.Controllers
 {

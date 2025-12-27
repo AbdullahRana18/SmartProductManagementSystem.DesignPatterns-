@@ -3,10 +3,13 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using SmartProductManagementSystem.Data;
 using SmartProductManagementSystem.DesignPatterns.Behavioral;
-using SmartProductManagementSystem.DesignPatterns.Creational;
 using SmartProductManagementSystem.DesignPatterns.Structural;
 using SmartProductManagementSystem.DesignPatterns.Behavioral.Command;
+using SmartProductManagementSystem.DesignPatterns.Behavioral.Observer;
 using SmartProductManagementSystem.Models;
+using SmartProductManagementSystem.DesignPatterns.Creational.Factory;
+using SmartProductManagementSystem.DesignPatterns.Structural.Adapter;
+using SmartProductManagementSystem.DesignPatterns.Structural.Decorator;
 
 namespace SmartProductManagementSystem.Controllers
 {

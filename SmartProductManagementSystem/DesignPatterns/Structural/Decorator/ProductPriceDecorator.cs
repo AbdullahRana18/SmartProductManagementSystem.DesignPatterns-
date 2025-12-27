@@ -1,4 +1,4 @@
-﻿namespace SmartProductManagementSystem.DesignPatterns.Structural
+﻿namespace SmartProductManagementSystem.DesignPatterns.Structural.Decorator
 {
     public abstract class ProductPriceDecorator : IProductPrice
     {

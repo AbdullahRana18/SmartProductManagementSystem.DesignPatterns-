@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace SmartProductManagementSystem.DesignPatterns.Creational
+namespace SmartProductManagementSystem.DesignPatterns.Creational.Factory
 {
     public class ProductFactory
     {

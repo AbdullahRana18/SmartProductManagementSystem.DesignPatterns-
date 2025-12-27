@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace SmartProductManagementSystem.DesignPatterns.Behavioral
+namespace SmartProductManagementSystem.DesignPatterns.Behavioral.Observer
 {
     public class StockSubject
     {

@@ -1,6 +1,6 @@
 ﻿using SmartProductManagementSystem.Data;
 
-namespace SmartProductManagementSystem.DesignPatterns.Structural
+namespace SmartProductManagementSystem.DesignPatterns.Structural.Facade
 {
     public class AdminDashboardFacade
     {

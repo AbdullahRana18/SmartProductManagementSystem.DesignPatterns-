@@ -1,4 +1,4 @@
-﻿namespace SmartProductManagementSystem.DesignPatterns.Behavioral
+﻿namespace SmartProductManagementSystem.DesignPatterns.Behavioral.Observer
 {
     public class UserObserver : IStockObserver
     {

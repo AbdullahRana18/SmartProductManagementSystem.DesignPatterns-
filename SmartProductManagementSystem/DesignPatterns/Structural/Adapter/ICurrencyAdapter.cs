@@ -1,4 +1,4 @@
-﻿namespace SmartProductManagementSystem.DesignPatterns.Structural
+﻿namespace SmartProductManagementSystem.DesignPatterns.Structural.Adapter
 {
     public interface ICurrencyAdapter
     {
