@@ -1,85 +1,184 @@
 ﻿@model IEnumerable<SmartProductManagementSystem.Models.Product>
 
-<div class="container mt-4">
-    <div class="d-flex justify-content-between align-items-center mb-3">
-        <h2>📦 Products</h2>
+@{
+    ViewData["Title"] = "Product Inventory";
+}
 
+<div class="container-fluid py-4">
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
         <div>
-            <a asp-action="Undo" class="btn btn-secondary me-2">
-                <i class="bi bi-arrow-counterclockwise"></i> Undo Last Action (Ctrl+Z)
-            </a>
+            <h3 class="fw-bold text-dark mb-1">Product Inventory</h3>
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb mb-0">
+                    <li class="breadcrumb-item"><a asp-controller="Admin" asp-action="Dashboard" class="text-decoration-none text-muted">Dashboard</a></li>
+                    <li class="breadcrumb-item active" aria-current="page">Products</li>
+                </ol>
+            </nav>
+        </div>
 
-            <a asp-action="Create" class="btn btn-success">
-                <i class="bi bi-plus-lg"></i> Add Product
+        <div class="d-flex gap-2">
+            <a asp-action="Undo" class="btn btn-light border shadow-sm text-dark d-flex align-items-center gap-2">
+                <i class="bi bi-arrow-counterclockwise"></i> <span class="d-none d-md-inline">Undo</span>
+            </a>
+            <a asp-action="Create" class="btn btn-primary shadow-sm d-flex align-items-center gap-2">
+                <i class="bi bi-plus-lg"></i> <span>Add Product</span>
             </a>
         </div>
     </div>
 
     @if (ViewBag.Notification != null)
     {
-        <div class="alert alert-info alert-dismissible fade show" role="alert">
-            <strong>Notification:</strong> @ViewBag.Notification
+        <div class="alert alert-success alert-dismissible fade show shadow-sm border-0 border-start border-success border-4" role="alert">
+            <div class="d-flex align-items-center">
+                <i class="bi bi-check-circle-fill text-success fs-4 me-3"></i>
+                <div>@ViewBag.Notification</div>
+            </div>
             <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
         </div>
     }
 
-    <table class="table table-bordered table-hover shadow-sm">
-        <thead class="table-dark">
-            <tr>
-                <th>Name</th>
-                <th>Price</th>
-                <th>Stock</th>
-                <th>Type</th>
-                <th>Category</th>
-                <th style="width: 350px;">Actions</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var item in Model)
+    <div class="card border-0 shadow-sm rounded-4 overflow-hidden">
+        <div class="card-body p-0">
+            <table class="table table-hover align-middle mb-0">
+                <thead class="bg-light">
+                    <tr>
+                        <th class="ps-4 py-3 text-muted small fw-bold">PRODUCT</th>
+                        <th class="py-3 text-muted small fw-bold">PRICE</th>
+                        <th class="py-3 text-muted small fw-bold">STOCK</th>
+                        <th class="py-3 text-muted small fw-bold">TYPE</th>
+                        <th class="py-3 text-muted small fw-bold">CATEGORY</th>
+                        <th class="pe-4 py-3 text-end text-muted small fw-bold">ACTIONS</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model)
+                    {
+                        <tr>
+                            <td class="ps-4 fw-bold text-dark">@item.Name</td>
+                            <td class="fw-semibold">@item.Price.ToString("N0")</td>
+                            <td>
+                                @if (item.StockQuantity < 5)
+                                {
+                                    <span class="badge bg-danger-subtle text-danger border border-danger-subtle rounded-pill px-3">Low: @item.StockQuantity</span>
+                                }
+                                else
+                                {
+                                    <span class="badge bg-success-subtle text-success border border-success-subtle rounded-pill px-3">@item.StockQuantity</span>
+                                }
+                            </td>
+                            <td class="text-muted">@item.ProductType</td>
+                            <td><span class="badge bg-light text-dark border">@item.Category?.Name</span></td>
+
+                            <td class="pe-4 text-end">
+                                <div class="d-flex justify-content-end gap-2">
+                                    <a asp-action="ApplyDiscount" asp-route-id="@item.Id" class="btn btn-sm btn-icon btn-warning-soft" title="Discount"><i class="bi bi-tag-fill"></i></a>
+                                    <a asp-action="ConvertPrice" asp-route-id="@item.Id" class="btn btn-sm btn-icon btn-info-soft" title="Convert"><i class="bi bi-currency-exchange"></i></a>
+                                    <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-sm btn-icon btn-primary-soft" title="Edit"><i class="bi bi-pencil-fill"></i></a>
+
+                                    <button type="button" class="btn btn-sm btn-icon btn-danger-soft" onclick="confirmDelete(@item.Id)" title="Delete">
+                                        <i class="bi bi-trash-fill"></i>
+                                    </button>
+
+                                    <form id="delete-form-@item.Id" asp-action="Delete" asp-route-id="@item.Id" method="post" style="display:none;"></form>
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+
+            @if (!Model.Any())
             {
-                <tr>
-                    <td>@item.Name</td>
-                    <td>@item.Price</td>
-                    <td>
-                        @if (item.StockQuantity < 5)
-                        {
-                            <span class="badge bg-danger">Low: @item.StockQuantity</span>
-                        }
-                        else
-                        {
-                            <span class="badge bg-success">@item.StockQuantity</span>
-                        }
-                    </td>
-                    <td>@item.ProductType</td>
-                    <td>@item.Category?.Name</td>
-                    <td>
-                        <div class="d-flex gap-1">
-                            <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-primary btn-sm">Edit</a>
-
-                            <form asp-action="Delete" asp-route-id="@item.Id" method="post" onsubmit="return confirm('Are you sure you want to delete @item.Name?');">
-                                <button type="submit" class="btn btn-danger btn-sm">Delete</button>
-                            </form>
-
-                            <a asp-action="ConvertPrice" asp-route-id="@item.Id" class="btn btn-sm btn-outline-info">
-                                Convert
-                            </a>
-
-                            <a asp-action="ApplyDiscount" asp-route-id="@item.Id" class="btn btn-warning btn-sm"> Discount</a>
-                        </div>
-                    </td>
-                </tr>
+                <div class="text-center py-5">
+                    <h5 class="fw-bold text-muted">No Products Found</h5>
+                    <a asp-action="Create" class="btn btn-primary btn-sm mt-2">Add New</a>
+                </div>
             }
-        </tbody>
-    </table>
+        </div>
+    </div>
 </div>
 
-<script>
-    document.addEventListener('keydown', function(event) {
-        // Check if Ctrl + Z is pressed
-        if ((event.ctrlKey || event.metaKey) && event.key === 'z') {
-            event.preventDefault(); // Browser ka default undo roko
+<style>
+    body {
+        background-color: #f5f7fa;
+    }
 
-            // Undo URL par redirect karo
+    .btn-icon {
+        width: 32px;
+        height: 32px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 8px;
+        transition: all 0.2s;
+    }
+
+    .btn-primary-soft {
+        background-color: #e9f2ff;
+        color: #0d6efd;
+    }
+
+        .btn-primary-soft:hover {
+            background-color: #0d6efd;
+            color: white;
+        }
+
+    .btn-danger-soft {
+        background-color: #ffeaea;
+        color: #dc3545;
+    }
+
+        .btn-danger-soft:hover {
+            background-color: #dc3545;
+            color: white;
+        }
+
+    .btn-warning-soft {
+        background-color: #fff8e1;
+        color: #ffc107;
+    }
+
+        .btn-warning-soft:hover {
+            background-color: #ffc107;
+            color: black;
+        }
+
+    .btn-info-soft {
+        background-color: #e0f7fa;
+        color: #0dcaf0;
+    }
+
+        .btn-info-soft:hover {
+            background-color: #0dcaf0;
+            color: white;
+        }
+</style>
+
+<script>
+    // 1. DELETE CONFIRMATION (Professional Popup)
+    function confirmDelete(id) {
+        Swal.fire({
+            title: 'Delete this product?',
+            text: "You won't be able to undo this directly!",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#dc3545',
+            cancelButtonColor: '#6c757d',
+            confirmButtonText: 'Yes, delete it!',
+            cancelButtonText: 'Cancel'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                // Agar user YES bole, to form submit karo
+                document.getElementById('delete-form-' + id).submit();
+            }
+        })
+    }
+
+    // 2. CTRL+Z SHORTCUT
+    document.addEventListener('keydown', function(event) {
+        if ((event.ctrlKey || event.metaKey) && event.key === 'z') {
+            event.preventDefault();
             window.location.href = '@Url.Action("Undo", "Product")';
         }
     });
