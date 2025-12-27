@@ -57,8 +57,13 @@
                         <tr>
                             <td class="ps-4 fw-bold text-dark">@item.Name</td>
                             <td class="fw-semibold">@item.Price.ToString("N0")</td>
+
                             <td>
-                                @if (item.StockQuantity < 5)
+                                @if (item.StockQuantity == 0)
+                                {
+                                    <span class="badge bg-danger text-white rounded-pill px-3 shadow-sm">Out of Stock</span>
+                                }
+                                else if (item.StockQuantity < 5)
                                 {
                                     <span class="badge bg-danger-subtle text-danger border border-danger-subtle rounded-pill px-3">Low: @item.StockQuantity</span>
                                 }
@@ -67,6 +72,7 @@
                                     <span class="badge bg-success-subtle text-success border border-success-subtle rounded-pill px-3">@item.StockQuantity</span>
                                 }
                             </td>
+
                             <td class="text-muted">@item.ProductType</td>
                             <td><span class="badge bg-light text-dark border">@item.Category?.Name</span></td>
 
@@ -156,7 +162,6 @@
 </style>
 
 <script>
-    // 1. DELETE CONFIRMATION (Professional Popup)
     function confirmDelete(id) {
         Swal.fire({
             title: 'Delete this product?',
@@ -169,13 +174,11 @@
             cancelButtonText: 'Cancel'
         }).then((result) => {
             if (result.isConfirmed) {
-                // Agar user YES bole, to form submit karo
                 document.getElementById('delete-form-' + id).submit();
             }
         })
     }
 
-    // 2. CTRL+Z SHORTCUT
     document.addEventListener('keydown', function(event) {
         if ((event.ctrlKey || event.metaKey) && event.key === 'z') {
             event.preventDefault();

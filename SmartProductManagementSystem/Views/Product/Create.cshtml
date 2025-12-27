@@ -1,23 +1,119 @@
 ﻿@model SmartProductManagementSystem.Models.Product
 
-<div class="container mt-5">
-    <h3>Add Product</h3>
+@{
+    ViewData["Title"] = "Add New Product";
+}
 
-    <form asp-action="Create" method="post">
-        <input asp-for="Name" class="form-control mb-2" placeholder="Product Name" />
-        <input asp-for="Price" class="form-control mb-2" placeholder="Price" />
-        <input asp-for="StockQuantity" class="form-control mb-2" placeholder="Stock" />
-        <label>Select Category:</label>
-        <select asp-for="CategoryId" class="form-control mb-2"
-                asp-items="ViewBag.Categories"></select>
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8 col-lg-6">
 
-        @* <select name="selectedType" class="form-control mb-3">
-            @foreach (var type in ViewBag.ProductTypes)
-            {
-                <option value="@type">@type</option>
-            }
-        </select> *@
+            <div class="card border-0 shadow-lg rounded-4 overflow-hidden">
 
-        <button class="btn btn-success">Save</button>
-    </form>
+                <div class="card-header bg-dark text-white text-center py-4 border-0">
+                    <div class="icon-circle bg-white bg-opacity-10 mx-auto mb-2 text-white">
+                        <i class="bi bi-box-seam-fill fs-3"></i>
+                    </div>
+                    <h4 class="fw-bold mb-1">Add New Inventory</h4>
+                    <p class="text-white-50 small mb-0">Enter product details below</p>
+                </div>
+
+                <div class="card-body p-4 p-md-5 bg-white">
+                    <form asp-action="Create" method="post">
+
+                        <div class="mb-4">
+                            <label class="form-label small text-muted fw-bold ls-1">PRODUCT NAME</label>
+                            <div class="input-group input-group-lg shadow-sm rounded-3 overflow-hidden border">
+                                <span class="input-group-text bg-white border-0 text-muted ps-3">
+                                    <i class="bi bi-tag"></i>
+                                </span>
+                                <input asp-for="Name" class="form-control border-0 shadow-none ps-2" placeholder="e.g. Wireless Headphones" />
+                            </div>
+                            <span asp-validation-for="Name" class="text-danger small ms-1"></span>
+                        </div>
+
+                        <div class="row g-3 mb-4">
+                            <div class="col-md-6">
+                                <label class="form-label small text-muted fw-bold ls-1">PRICE (PKR)</label>
+                                <div class="input-group shadow-sm rounded-3 overflow-hidden border">
+                                    <span class="input-group-text bg-white border-0 text-muted ps-3">
+                                        <i class="bi bi-currency-dollar"></i>
+                                    </span>
+                                    <input asp-for="Price" class="form-control border-0 shadow-none ps-2" placeholder="0.00" />
+                                </div>
+                                <span asp-validation-for="Price" class="text-danger small ms-1"></span>
+                            </div>
+
+                            <div class="col-md-6">
+                                <label class="form-label small text-muted fw-bold ls-1">STOCK QUANTITY</label>
+                                <div class="input-group shadow-sm rounded-3 overflow-hidden border">
+                                    <span class="input-group-text bg-white border-0 text-muted ps-3">
+                                        <i class="bi bi-layers"></i>
+                                    </span>
+                                    <input asp-for="StockQuantity" class="form-control border-0 shadow-none ps-2" placeholder="0" />
+                                </div>
+                                <span asp-validation-for="StockQuantity" class="text-danger small ms-1"></span>
+                            </div>
+                        </div>
+
+                        <div class="mb-4">
+                            <label class="form-label small text-muted fw-bold ls-1">CATEGORY</label>
+                            <div class="input-group shadow-sm rounded-3 overflow-hidden border">
+                                <span class="input-group-text bg-white border-0 text-muted ps-3">
+                                    <i class="bi bi-folder2-open"></i>
+                                </span>
+                                <select asp-for="CategoryId" class="form-select border-0 shadow-none ps-2" asp-items="ViewBag.Categories">
+                                    <option value="" disabled selected>Select a Category...</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="d-grid gap-3 pt-2">
+                            <button type="submit" class="btn btn-dark btn-lg rounded-3 shadow-sm fw-bold">
+                                <i class="bi bi-check2-circle me-2"></i> Save Product
+                            </button>
+                            <a asp-action="Index" class="btn btn-light btn-lg rounded-3 text-muted">
+                                Cancel
+                            </a>
+                        </div>
+
+                    </form>
+                </div>
+            </div>
+
+        </div>
+    </div>
 </div>
+
+<style>
+    body {
+        background-color: #f5f7fa;
+    }
+
+    /* Icon Circle in Header */
+    .icon-circle {
+        width: 50px;
+        height: 50px;
+        border-radius: 14px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        backdrop-filter: blur(5px);
+    }
+
+    /* Input Field Styling */
+    .input-group:focus-within {
+        box-shadow: 0 0 0 3px rgba(33, 37, 41, 0.1) !important;
+        border-color: #212529 !important;
+    }
+
+    .ls-1 {
+        letter-spacing: 1px;
+    }
+</style>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

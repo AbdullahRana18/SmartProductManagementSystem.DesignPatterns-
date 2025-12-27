@@ -1,23 +1,106 @@
-﻿<div class="container mt-5">
-    <div class="card shadow">
-        <div class="card-header bg-warning">
-            <h4>💰 Discount Applied</h4>
-        </div>
+﻿@{
+    ViewData["Title"] = "Discount Details";
+    // Calculation for visual aesthetics (Safe casting)
+    decimal original = Convert.ToDecimal(ViewBag.OriginalPrice);
+    decimal final = Convert.ToDecimal(ViewBag.FinalPrice);
+    decimal savings = original - final;
+}
 
-        <div class="card-body">
-            <h5>Product: @ViewBag.ProductName</h5>
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-5">
 
-            <p>
-                <strong>Original Price:</strong>
-                <span class="text-danger">@ViewBag.OriginalPrice</span>
-            </p>
+            <div class="card border-0 shadow-lg rounded-4 overflow-hidden">
 
-            <p>
-                <strong>Final Price:</strong>
-                <span class="text-success">@ViewBag.FinalPrice</span>
-            </p>
+                <div class="card-header bg-warning-soft text-center py-5 border-0 position-relative">
+                    <div class="icon-circle bg-white shadow-sm mx-auto mb-3">
+                        <i class="bi bi-percent text-warning fs-1"></i>
+                    </div>
+                    <h4 class="fw-bold text-dark mb-1">Discount Applied!</h4>
+                    <p class="text-muted small mb-0">Decorator Pattern Successfully Executed</p>
+                </div>
 
-            <a asp-action="Index" class="btn btn-secondary">Back to Products</a>
+                <div class="card-body p-4 bg-white">
+                    <div class="text-center mb-4">
+                        <h6 class="text-uppercase text-muted small fw-bold ls-1">Product Name</h6>
+                        <h3 class="fw-bold text-dark">@ViewBag.ProductName</h3>
+                    </div>
+
+                    <div class="price-comparison-box p-3 rounded-3 mb-4">
+                        <div class="row align-items-center text-center">
+
+                            <div class="col-6 border-end">
+                                <small class="text-muted d-block mb-1">Original Price</small>
+                                <span class="text-decoration-line-through text-muted fs-5 fw-medium">
+                                    @original.ToString("N0")
+                                </span>
+                                <small class="text-muted">PKR</small>
+                            </div>
+
+                            <div class="col-6">
+                                <small class="text-success fw-bold d-block mb-1">New Price</small>
+                                <span class="text-success fw-bold fs-2">
+                                    @final.ToString("N0")
+                                </span>
+                                <small class="text-success fw-bold">PKR</small>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="alert alert-success bg-success-subtle border-0 text-center text-success mb-4 rounded-3">
+                        <i class="bi bi-stars me-2"></i> You saved <strong>@savings.ToString("N0") PKR</strong> on this item!
+                    </div>
+
+                    <div class="d-grid gap-2">
+                        <a asp-action="Index" class="btn btn-dark btn-lg rounded-3 shadow-sm">
+                            <i class="bi bi-arrow-left me-2"></i> Back to Inventory
+                        </a>
+                    </div>
+                </div>
+            </div>
+
         </div>
     </div>
 </div>
+
+<style>
+    body {
+        background-color: #f5f7fa;
+    }
+
+    /* Custom Soft Yellow Background */
+    .bg-warning-soft {
+        background: linear-gradient(180deg, #fff8e1 0%, #fff 100%);
+    }
+
+    .text-warning {
+        color: #f57c00 !important; /* Darker orange-yellow for better visibility */
+    }
+
+    /* Floating Icon Circle */
+    .icon-circle {
+        width: 80px;
+        height: 80px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-top: -10px;
+    }
+
+    /* Price Box Styling */
+    .price-comparison-box {
+        background-color: #f8f9fa;
+        border: 1px dashed #dee2e6;
+    }
+
+    .ls-1 {
+        letter-spacing: 1px;
+    }
+
+    /* Professional Background for Savings Alert */
+    .bg-success-subtle {
+        background-color: #e8f5e9 !important;
+        color: #1b5e20 !important;
+    }
+</style>
