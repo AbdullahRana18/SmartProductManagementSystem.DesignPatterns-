@@ -1,82 +1,59 @@
 ﻿@model SmartProductManagementSystem.Models.Product
 
 @{
-    ViewData["Title"] = "Add New Product";
+    ViewData["Title"] = "Delete Product";
 }
 
-<div class="container py-5">
+<div class="container py-3 py-md-5">
     <div class="row justify-content-center">
-        <div class="col-md-8 col-lg-6">
+        <div class="col-11 col-sm-10 col-md-6 col-lg-5">
 
             <div class="card border-0 shadow-lg rounded-4 overflow-hidden">
 
-                <div class="card-header bg-dark text-white text-center py-4 border-0">
-                    <div class="icon-circle bg-white bg-opacity-10 mx-auto mb-2 text-white">
-                        <i class="bi bi-box-seam-fill fs-3"></i>
+                <div class="card-body p-4 p-md-5 text-center">
+
+                    <div class="icon-circle bg-danger-subtle mx-auto mb-4">
+                        <i class="bi bi-trash3-fill text-danger fs-1"></i>
                     </div>
-                    <h4 class="fw-bold mb-1">Add New Inventory</h4>
-                    <p class="text-white-50 small mb-0">Enter product details below</p>
-                </div>
 
-                <div class="card-body p-4 p-md-5 bg-white">
-                    <form asp-action="Create" method="post">
+                    <h3 class="fw-bold text-dark mb-2 fs-4 fs-md-3">Delete Product?</h3>
+                    <p class="text-muted mb-4 small">
+                        Are you sure you want to remove this item? <br class="d-none d-sm-block">
+                        This action will remove it from the database.
+                    </p>
 
-                        <div class="mb-4">
-                            <label class="form-label small text-muted fw-bold ls-1">PRODUCT NAME</label>
-                            <div class="input-group input-group-lg shadow-sm rounded-3 overflow-hidden border">
-                                <span class="input-group-text bg-white border-0 text-muted ps-3">
-                                    <i class="bi bi-tag"></i>
-                                </span>
-                                <input asp-for="Name" class="form-control border-0 shadow-none ps-2" placeholder="e.g. Wireless Headphones" />
-                            </div>
-                            <span asp-validation-for="Name" class="text-danger small ms-1"></span>
+                    <div class="product-summary bg-light border rounded-3 p-3 mb-4 text-start">
+
+                        <div class="d-flex flex-column flex-sm-row justify-content-between border-bottom pb-2 mb-2 gap-1">
+                            <span class="text-uppercase text-muted extra-small fw-bold">Product Name</span>
+                            <span class="fw-bold text-dark text-truncate" style="max-width: 100%;">@Model.Name</span>
                         </div>
 
-                        <div class="row g-3 mb-4">
-                            <div class="col-md-6">
-                                <label class="form-label small text-muted fw-bold ls-1">PRICE (PKR)</label>
-                                <div class="input-group shadow-sm rounded-3 overflow-hidden border">
-                                    <span class="input-group-text bg-white border-0 text-muted ps-3">
-                                        <i class="bi bi-currency-dollar"></i>
-                                    </span>
-                                    <input asp-for="Price" class="form-control border-0 shadow-none ps-2" placeholder="0.00" />
-                                </div>
-                                <span asp-validation-for="Price" class="text-danger small ms-1"></span>
-                            </div>
-
-                            <div class="col-md-6">
-                                <label class="form-label small text-muted fw-bold ls-1">STOCK QUANTITY</label>
-                                <div class="input-group shadow-sm rounded-3 overflow-hidden border">
-                                    <span class="input-group-text bg-white border-0 text-muted ps-3">
-                                        <i class="bi bi-layers"></i>
-                                    </span>
-                                    <input asp-for="StockQuantity" class="form-control border-0 shadow-none ps-2" placeholder="0" />
-                                </div>
-                                <span asp-validation-for="StockQuantity" class="text-danger small ms-1"></span>
-                            </div>
+                        <div class="d-flex flex-row justify-content-between border-bottom pb-2 mb-2 align-items-center">
+                            <span class="text-uppercase text-muted extra-small fw-bold">Category</span>
+                            <span class="badge bg-white text-dark border py-1 px-2 small">@Model.Category?.Name</span>
                         </div>
 
-                        <div class="mb-4">
-                            <label class="form-label small text-muted fw-bold ls-1">CATEGORY</label>
-                            <div class="input-group shadow-sm rounded-3 overflow-hidden border">
-                                <span class="input-group-text bg-white border-0 text-muted ps-3">
-                                    <i class="bi bi-folder2-open"></i>
-                                </span>
-                                <select asp-for="CategoryId" class="form-select border-0 shadow-none ps-2" asp-items="ViewBag.Categories">
-                                    <option value="" disabled selected>Select a Category...</option>
-                                </select>
-                            </div>
+                        <div class="d-flex flex-row justify-content-between align-items-center">
+                            <span class="text-uppercase text-muted extra-small fw-bold">Price</span>
+                            <span class="fw-bold text-danger fs-5">
+                                @Model.Price.ToString("N0") <small class="extra-small text-muted fw-normal">PKR</small>
+                            </span>
                         </div>
+                    </div>
 
-                        <div class="d-grid gap-3 pt-2">
-                            <button type="submit" class="btn btn-dark btn-lg rounded-3 shadow-sm fw-bold">
-                                <i class="bi bi-check2-circle me-2"></i> Save Product
+                    <form asp-action="Delete" method="post">
+                        <input type="hidden" asp-for="Id" />
+
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-danger btn-lg rounded-3 shadow-sm fw-bold fs-6 py-2 py-md-3">
+                                <i class="bi bi-trash me-2"></i> Yes, Delete It
                             </button>
-                            <a asp-action="Index" class="btn btn-light btn-lg rounded-3 text-muted">
-                                Cancel
+
+                            <a asp-action="Index" class="btn btn-light btn-lg rounded-3 text-muted fs-6 py-2 py-md-3 border">
+                                No, Keep It
                             </a>
                         </div>
-
                     </form>
                 </div>
             </div>
@@ -90,30 +67,57 @@
         background-color: #f5f7fa;
     }
 
-    /* Icon Circle in Header */
+    /* Danger Icon Circle Responsive */
     .icon-circle {
-        width: 50px;
-        height: 50px;
-        border-radius: 14px;
+        width: 60px;
+        height: 60px;
+        @@media (min-width: 768px) {
+            width: 80px;
+            height: 80px;
+        }
+
+        border-radius: 50%;
         display: flex;
         align-items: center;
         justify-content: center;
-        backdrop-filter: blur(5px);
+        background-color: #fee2e2 !important;
     }
 
-    /* Input Field Styling */
-    .input-group:focus-within {
-        box-shadow: 0 0 0 3px rgba(33, 37, 41, 0.1) !important;
-        border-color: #212529 !important;
+        .icon-circle i {
+            font-size: 1.5rem !important;
+        }
+    @@media (min-width: 768px) {
+        .icon-circle i {
+            font-size: 2.5rem !important;
+        }
     }
 
-    .ls-1 {
-        letter-spacing: 1px;
+    .text-danger {
+        color: #dc2626 !important;
     }
+
+    .product-summary {
+        background-color: #f8f9fa;
+        border: 1px dashed #dee2e6 !important;
+    }
+
+    /* Small labels fix */
+    .extra-small {
+        font-size: 0.7rem;
+    }
+    @@media (min-width: 768px) {
+        .extra-small {
+            font-size: 0.75rem;
+        }
+    }
+
+    .btn-danger {
+        background-color: #dc2626;
+        border-color: #dc2626;
+    }
+
+        .btn-danger:hover {
+            background-color: #b91c1c;
+            transform: translateY(-1px);
+        }
 </style>
-
-@section Scripts {
-    @{
-        await Html.RenderPartialAsync("_ValidationScriptsPartial");
-    }
-}

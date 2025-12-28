@@ -3,8 +3,8 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using SmartProductManagementSystem.Data;
 using SmartProductManagementSystem.Models;
-using System.Text.Json; // JSON Session ke liye
-using System.Collections.Generic; // Dictionary ke liye (Important Fix)
+using System.Text.Json; 
+using System.Collections.Generic; 
 
 // Design Pattern Namespaces
 using SmartProductManagementSystem.DesignPatterns.Behavioral.Command;

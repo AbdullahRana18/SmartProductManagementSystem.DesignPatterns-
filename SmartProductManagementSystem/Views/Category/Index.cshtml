@@ -4,72 +4,78 @@
     ViewData["Title"] = "Category Management";
 }
 
-<div class="container-fluid py-4">
+<div class="container-fluid py-3 py-md-4 px-3 px-md-5">
 
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <div>
-            <h3 class="fw-bold text-dark mb-1">Category Management</h3>
-            <nav aria-label="breadcrumb">
-                <ol class="breadcrumb mb-0">
+    <div class="row align-items-center mb-4 g-3">
+        <div class="col-12 col-md-6 text-center text-md-start">
+            <h3 class="fw-bold text-dark mb-1 fs-4 fs-md-3">Category Management</h3>
+            <nav aria-label="breadcrumb" class="d-flex justify-content-center justify-content-md-start">
+                <ol class="breadcrumb mb-0 small">
                     <li class="breadcrumb-item"><a asp-controller="Admin" asp-action="Dashboard" class="text-decoration-none text-muted">Dashboard</a></li>
                     <li class="breadcrumb-item active" aria-current="page">Categories</li>
                 </ol>
             </nav>
         </div>
 
-        <a asp-action="Create" class="btn btn-success shadow-sm d-flex align-items-center gap-2 px-4 rounded-3">
-            <i class="bi bi-folder-plus"></i> <span>Add Category</span>
-        </a>
+        <div class="col-12 col-md-6">
+            <div class="d-flex justify-content-center justify-content-md-end">
+                <a asp-action="Create" class="btn btn-success shadow-sm d-flex align-items-center justify-content-center gap-2 px-4 rounded-3 py-2 w-100 w-sm-auto">
+                    <i class="bi bi-folder-plus"></i>
+                    <span>Add Category</span>
+                </a>
+            </div>
+        </div>
     </div>
 
     <div class="card border-0 shadow-sm rounded-4 overflow-hidden">
         <div class="card-body p-0">
-            <table class="table table-hover align-middle mb-0">
-                <thead class="bg-light">
-                    <tr>
-                        <th class="ps-4 py-3 text-uppercase text-muted small fw-bold" style="width: 100px;">ID</th>
-                        <th class="py-3 text-uppercase text-muted small fw-bold">Category Name</th>
-                        <th class="pe-4 py-3 text-end text-uppercase text-muted small fw-bold">Actions</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach (var item in Model)
-                    {
+            <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0 text-nowrap">
+                    <thead class="bg-light">
                         <tr>
-                            <td class="ps-4">
-                                <span class="badge bg-light text-secondary border">#@item.Id</span>
-                            </td>
-                            <td>
-                                <div class="fw-bold text-dark d-flex align-items-center gap-2">
-                                    <i class="bi bi-folder2-open text-warning"></i> @item.Name
-                                </div>
-                            </td>
-
-                            <td class="pe-4 text-end">
-                                <div class="d-flex justify-content-end gap-2">
-
-                                    <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-sm btn-icon btn-primary-soft" title="Edit">
-                                        <i class="bi bi-pencil-fill"></i>
-                                    </a>
-
-                                    <button type="button" class="btn btn-sm btn-icon btn-danger-soft" onclick="confirmDelete(@item.Id)" title="Delete">
-                                        <i class="bi bi-trash-fill"></i>
-                                    </button>
-
-                                    <form id="delete-form-@item.Id" asp-action="Delete" asp-route-id="@item.Id" method="post" style="display:none;"></form>
-                                </div>
-                            </td>
+                            <th class="ps-4 py-3 text-uppercase text-muted small fw-bold" style="width: 80px;">ID</th>
+                            <th class="py-3 text-uppercase text-muted small fw-bold">Category Name</th>
+                            <th class="pe-4 py-3 text-end text-uppercase text-muted small fw-bold">Actions</th>
                         </tr>
-                    }
-                </tbody>
-            </table>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model)
+                        {
+                            <tr>
+                                <td class="ps-4">
+                                    <span class="badge bg-light text-secondary border small">#@item.Id</span>
+                                </td>
+                                <td>
+                                    <div class="fw-bold text-dark d-flex align-items-center gap-2">
+                                        <i class="bi bi-folder2-open text-warning"></i> @item.Name
+                                    </div>
+                                </td>
+
+                                <td class="pe-4 text-end">
+                                    <div class="d-flex justify-content-end gap-2">
+                                        <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-sm btn-icon btn-primary-soft" title="Edit">
+                                            <i class="bi bi-pencil-fill"></i>
+                                        </a>
+
+                                        <button type="button" class="btn btn-sm btn-icon btn-danger-soft" onclick="confirmDelete(@item.Id)" title="Delete">
+                                            <i class="bi bi-trash-fill"></i>
+                                        </button>
+
+                                        <form id="delete-form-@item.Id" asp-action="Delete" asp-route-id="@item.Id" method="post" style="display:none;"></form>
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
 
             @if (!Model.Any())
             {
-                <div class="text-center py-5">
+                <div class="text-center py-5 px-3">
                     <div class="text-muted mb-2"><i class="bi bi-folder-x display-4 text-light-emphasis"></i></div>
                     <h5 class="fw-bold text-muted">No Categories Found</h5>
-                    <a asp-action="Create" class="btn btn-success btn-sm mt-2">Create First Category</a>
+                    <a asp-action="Create" class="btn btn-success btn-sm mt-2 px-4">Create First Category</a>
                 </div>
             }
         </div>
@@ -81,10 +87,15 @@
         background-color: #f5f7fa;
     }
 
-    /* Soft Buttons */
+    /* Buttons Style */
     .btn-icon {
         width: 32px;
         height: 32px;
+        @@media (min-width: 768px) {
+            width: 36px;
+            height: 36px;
+        }
+
         display: flex;
         align-items: center;
         justify-content: center;
@@ -95,6 +106,7 @@
     .btn-primary-soft {
         background-color: #e9f2ff;
         color: #0d6efd;
+        border: none;
     }
 
         .btn-primary-soft:hover {
@@ -105,6 +117,7 @@
     .btn-danger-soft {
         background-color: #ffeaea;
         color: #dc3545;
+        border: none;
     }
 
         .btn-danger-soft:hover {
@@ -112,7 +125,14 @@
             color: white;
         }
 
-    /* Table Header */
+    /* Button width logic for mobile vs desktop */
+    @@media (min-width: 576px) {
+        .w-sm-auto {
+            width: auto !important;
+        }
+    }
+
+    /* Table Header Style */
     .table thead th {
         border-bottom: 2px solid #edf2f9;
         background-color: #f8f9fa;
@@ -128,7 +148,8 @@
             showCancelButton: true,
             confirmButtonColor: '#dc3545',
             cancelButtonColor: '#6c757d',
-            confirmButtonText: 'Yes, delete it!'
+            confirmButtonText: 'Yes, delete it!',
+            cancelButtonText: 'Cancel'
         }).then((result) => {
             if (result.isConfirmed) {
                 document.getElementById('delete-form-' + id).submit();
