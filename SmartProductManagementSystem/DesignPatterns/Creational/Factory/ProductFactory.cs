@@ -11,6 +11,8 @@ namespace SmartProductManagementSystem.DesignPatterns.Creational.Factory
                 "Electronics" => new ElectronicsProduct(),
                 "Grocery" => new GroceryProduct(),
                 "Furniture" => new FurnitureProduct(),
+                "Fruits" => new FruitsProduct(),
+                "Clothing" => new ClothingProduct(),
                 _ => throw new ArgumentException("Invalid product type")
             };
         }
