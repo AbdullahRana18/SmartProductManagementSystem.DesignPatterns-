@@ -173,12 +173,25 @@ namespace SmartProductManagementSystem.Controllers
             if (product == null) return NotFound();
 
             IProductPrice price = new BaseProductPrice(product);
-            price = new PercentageDiscountDecorator(price, 10);
-            price = new FlatDiscountDecorator(price, 100);
+            string discountMessage = "";
+
+            if (product.Price >= 3000)
+            {
+                price = new PercentageDiscountDecorator(price, 10);
+                //discountMessage = "🔥 Mega Saver: 10% Off Applied";
+            }
+            else if (product.Price >= 500)
+            {
+                price = new FlatDiscountDecorator(price, 150);
+                //discountMessage = "🏷️ Special Bonus: Flat 150 PKR Off";
+            }
+            else
+                discountMessage = "Standard Price (No Discount on items below 500)";
 
             ViewBag.OriginalPrice = product.Price;
             ViewBag.FinalPrice = price.GetPrice();
             ViewBag.ProductName = product.Name;
+            ViewBag.DiscountMessage = discountMessage;
 
             return View();
         }

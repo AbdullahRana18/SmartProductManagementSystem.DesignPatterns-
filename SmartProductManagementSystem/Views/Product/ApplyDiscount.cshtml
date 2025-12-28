@@ -1,9 +1,11 @@
 ﻿@{
-    ViewData["Title"] = "Discount Details";
-    // Calculation for visual aesthetics (Safe casting)
+    ViewData["Title"] = "Price Details";
     decimal original = Convert.ToDecimal(ViewBag.OriginalPrice);
     decimal final = Convert.ToDecimal(ViewBag.FinalPrice);
     decimal savings = original - final;
+
+    // Check agar discount laga hai ya nahi
+    bool hasDiscount = savings > 0;
 }
 
 <div class="container py-5">
@@ -12,15 +14,28 @@
 
             <div class="card border-0 shadow-lg rounded-4 overflow-hidden">
 
-                <div class="card-header bg-warning-soft text-center py-5 border-0 position-relative">
+                <div class="card-header text-center py-5 border-0 position-relative @(hasDiscount ? "bg-warning-soft" : "bg-light")">
                     <div class="icon-circle bg-white shadow-sm mx-auto mb-3">
-                        <i class="bi bi-percent text-warning fs-1"></i>
+                        @if (hasDiscount)
+                        {
+                            <i class="bi bi-percent text-warning fs-1"></i>
+                        }
+                        else
+                        {
+                            <i class="bi bi-tag text-secondary fs-1"></i>
+                        }
                     </div>
-                    <h4 class="fw-bold text-dark mb-1">Discount Applied!</h4>
-                    <p class="text-muted small mb-0">Decorator Pattern Successfully Executed</p>
+
+                    <h4 class="fw-bold text-dark mb-1">
+                        @(hasDiscount ? "Discount Applied!" : "Standard Price")
+                    </h4>
+                    <p class="text-muted small mb-0">
+                        @(hasDiscount ? "Decorator Pattern Applied Successfully" : "No active offers on this item")
+                    </p>
                 </div>
 
                 <div class="card-body p-4 bg-white">
+
                     <div class="text-center mb-4">
                         <h6 class="text-uppercase text-muted small fw-bold ls-1">Product Name</h6>
                         <h3 class="fw-bold text-dark">@ViewBag.ProductName</h3>
@@ -30,26 +45,44 @@
                         <div class="row align-items-center text-center">
 
                             <div class="col-6 border-end">
-                                <small class="text-muted d-block mb-1">Original Price</small>
-                                <span class="text-decoration-line-through text-muted fs-5 fw-medium">
+                                <small class="text-muted d-block mb-1">Base Price</small>
+                                <span class="@(hasDiscount ? "text-decoration-line-through text-muted" : "text-dark") fs-5 fw-medium">
                                     @original.ToString("N0")
                                 </span>
                                 <small class="text-muted">PKR</small>
                             </div>
 
                             <div class="col-6">
-                                <small class="text-success fw-bold d-block mb-1">New Price</small>
-                                <span class="text-success fw-bold fs-2">
+                                <small class="@(hasDiscount ? "text-success" : "text-dark") fw-bold d-block mb-1">
+                                    @(hasDiscount ? "New Price" : "Net Price")
+                                </small>
+                                <span class="@(hasDiscount ? "text-success" : "text-dark") fw-bold fs-2">
                                     @final.ToString("N0")
                                 </span>
-                                <small class="text-success fw-bold">PKR</small>
+                                <small class="@(hasDiscount ? "text-success" : "text-dark") fw-bold">PKR</small>
                             </div>
                         </div>
                     </div>
 
-                    <div class="alert alert-success bg-success-subtle border-0 text-center text-success mb-4 rounded-3">
-                        <i class="bi bi-stars me-2"></i> You saved <strong>@savings.ToString("N0") PKR</strong> on this item!
-                    </div>
+                    @if (hasDiscount)
+                    {
+                        <div class="alert alert-success bg-success-subtle border-0 text-center text-success mb-4 rounded-3">
+                            <div class="mb-2">
+                                <span class="badge bg-white text-success border border-success px-3 py-2 shadow-sm">
+                                    @ViewBag.DiscountDetails
+                                </span>
+                            </div>
+                            <div>
+                                <i class="bi bi-stars me-1"></i> You saved <strong>@savings.ToString("N0") PKR</strong> on this item!
+                            </div>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="alert alert-secondary border-0 text-center text-muted mb-4 rounded-3">
+                            <i class="bi bi-info-circle me-1"></i> @ViewBag.DiscountDetails
+                        </div>
+                    }
 
                     <div class="d-grid gap-2">
                         <a asp-action="Index" class="btn btn-dark btn-lg rounded-3 shadow-sm">
@@ -68,16 +101,20 @@
         background-color: #f5f7fa;
     }
 
-    /* Custom Soft Yellow Background */
+    /* Yellow Theme (Discount) */
     .bg-warning-soft {
         background: linear-gradient(180deg, #fff8e1 0%, #fff 100%);
     }
 
     .text-warning {
-        color: #f57c00 !important; /* Darker orange-yellow for better visibility */
+        color: #f57c00 !important;
     }
 
-    /* Floating Icon Circle */
+    /* Grey Theme (No Discount) */
+    .bg-light {
+        background: linear-gradient(180deg, #f8f9fa 0%, #fff 100%);
+    }
+
     .icon-circle {
         width: 80px;
         height: 80px;
@@ -88,7 +125,6 @@
         margin-top: -10px;
     }
 
-    /* Price Box Styling */
     .price-comparison-box {
         background-color: #f8f9fa;
         border: 1px dashed #dee2e6;
@@ -98,7 +134,6 @@
         letter-spacing: 1px;
     }
 
-    /* Professional Background for Savings Alert */
     .bg-success-subtle {
         background-color: #e8f5e9 !important;
         color: #1b5e20 !important;
